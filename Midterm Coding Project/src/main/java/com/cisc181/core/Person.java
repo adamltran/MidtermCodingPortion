@@ -1,13 +1,12 @@
 package com.cisc181.core;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/*
- * comment
- */
 public abstract class Person implements java.io.Serializable {
 
 	private Date DOB;
@@ -44,11 +43,16 @@ public abstract class Person implements java.io.Serializable {
 
 	public Date getDOB() {
 		return DOB;
+
 	}
 
-	public void setDOB(Date DOB){
-		this.DOB = DOB;
-		
+	public void setDOB(Date DOB) throws PersonException {
+		if ((2016 - this.getDOB().getYear()) > 100) {
+			throw new PersonException();
+		}
+		else {
+			this.DOB = DOB;
+		}
 		
 	}
 
@@ -60,10 +64,18 @@ public abstract class Person implements java.io.Serializable {
 		return address;
 	}
 
-	public void setPhone(String newPhone_number) {
+	public void setPhone(String newPhone_number) throws PersonException {
+		String regex = "^\\(([0-9]{3})\\)[-]([0-9]{3})[-]([0-9]{4})$";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(newPhone_number);
+		if (matcher.matches()) {
 		phone_number = newPhone_number;
-	
-	}
+		}
+		else {
+		throw new PersonException();
+		}
+
+		}
 
 	public String getPhone() {
 		return phone_number;
@@ -88,9 +100,8 @@ public abstract class Person implements java.io.Serializable {
 	 * Constructors Constructor with arguments
 	 */
 
-	public Person(String FirstName, String MiddleName, String LastName,
-			Date DOB, String Address, String Phone_number, String Email)
-	{
+	public Person(String FirstName, String MiddleName, String LastName, Date DOB, String Address, String Phone_number,
+			String Email) throws PersonException {
 		this.FirstName = FirstName;
 		this.MiddleName = MiddleName;
 		this.LastName = LastName;
@@ -98,12 +109,11 @@ public abstract class Person implements java.io.Serializable {
 		this.address = Address;
 		this.setPhone(Phone_number);
 		this.email_address = Email;
-		
+
 	}
 
 	public void PrintName() {
-		System.out.println(this.FirstName + ' ' + this.MiddleName + ' '
-				+ this.LastName);
+		System.out.println(this.FirstName + ' ' + this.MiddleName + ' ' + this.LastName);
 	}
 
 	public void PrintDOB() {
@@ -123,22 +133,26 @@ public abstract class Person implements java.io.Serializable {
 
 		// If birth date is greater than todays date (after 2 days adjustment of
 		// leap year) then decrement age one year
-		if ((birthDate.get(Calendar.DAY_OF_YEAR)
-				- today.get(Calendar.DAY_OF_YEAR) > 3)
+		if ((birthDate.get(Calendar.DAY_OF_YEAR) - today.get(Calendar.DAY_OF_YEAR) > 3)
 				|| (birthDate.get(Calendar.MONTH) > today.get(Calendar.MONTH))) {
 			age--;
 
 			// If birth date and todays date are of same month and birth day of
 			// month is greater than todays day of month then decrement age
 		} else if ((birthDate.get(Calendar.MONTH) == today.get(Calendar.MONTH))
-				&& (birthDate.get(Calendar.DAY_OF_MONTH) > today
-						.get(Calendar.DAY_OF_MONTH))) {
+				&& (birthDate.get(Calendar.DAY_OF_MONTH) > today.get(Calendar.DAY_OF_MONTH))) {
 			age--;
 		}
 
 		System.out.println("age is " + age);
 
 		return age;
-
 	}
+	
+
+	
+	
+	
+	
+	
 }
